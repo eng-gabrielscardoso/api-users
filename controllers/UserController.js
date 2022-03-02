@@ -1,3 +1,4 @@
+const User = require('../models/User');
 class UserController {
   async index (req, res, next) {
   }
@@ -19,6 +20,8 @@ class UserController {
       res.status(400);
       res.json({ "err": "Senha inválida"});
     }
+
+    await User.create(name, email, password);
 
     res.status(200);
     res.json({ "status": "Usuário cadastrado com sucesso" });
