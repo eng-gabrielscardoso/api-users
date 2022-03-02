@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon",
+    "migrate": "npx knex migrate:make usertest",
+    "seed": "npx knex seed:make usertest",
     "start": "node index.js"
   },
   "author": "",
