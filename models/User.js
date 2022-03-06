@@ -5,7 +5,7 @@ const knex = require('../database/connection');
 class User {
   async create (name, email, password) {
     try {
-      const hash = await bcrypt.hash(password, 10)
+      let hash = await bcrypt.hash(password, 10)
 
       await knex
         .insert({ name, email, password: hash, role: 0 })
@@ -17,7 +17,7 @@ class User {
 
   async findEmail (email) {
     try {
-      const result = await knex
+      let result = await knex
         .select('*')
         .from('users')
         .where({ email: email, })
@@ -35,7 +35,7 @@ class User {
 
   async findUsers () {
     try {
-      const result = await knex
+      let result = await knex
         .select(['id', 'name', 'email', 'role'])
         .table('users');
 
@@ -48,7 +48,7 @@ class User {
 
   async findById (id) {
     try {
-      const result = await knex
+      let result = await knex
         .select(['id', 'name', 'email', 'role'])
         .table('users')
         .where({ id: id });
@@ -57,6 +57,56 @@ class User {
     } catch (e) {
       console.error(e);
       return [];
+    }
+  }
+
+  async update (id, name, email, role) {
+    let user = await this.findById(id);
+
+    if(user != undefined) {
+      let editUser = {};
+
+      if (email != undefined) {
+        if (email != user.email) {
+          let result = await this.findEmail(email);
+
+          if (result === false) {
+            editUser.email = email;
+          } else {
+            return {
+              status: false,
+              err: 'O e-mail já está cadastrado'
+            }
+          }
+        }
+      }
+
+      if (name != undefined) {
+        editUser.name = name;
+      }
+
+      if (role != undefined) {
+        editUser.role = role;
+      }
+
+      try {
+        await knex
+          .update(editUser)
+          .where({ id: id })
+          .table('users');
+
+          return { status: true };
+      } catch (e) {
+        return {
+          status: false,
+          err: e
+        }
+      }
+    } else {
+      return {
+        status: false,
+        err: 'Usuário não existe no banco de dados'
+      }
     }
   }
 }

@@ -24,7 +24,7 @@ class UserController {
       return;
     }
 
-    const emailExists = await User.findEmail(email);
+    let emailExists = await User.findEmail(email);
 
     if (emailExists) {
       res.status(406)
@@ -40,7 +40,7 @@ class UserController {
 
   async findUsers (req, res, next) {
     try {
-      const users = await User.findUsers();
+      let users = await User.findUsers();
 
       res.status(200);
       res.json(users);
@@ -57,7 +57,7 @@ class UserController {
     
     try {
       let { id } = req.params;
-      const user = await User.findById(id)  ;
+      let user = await User.findById(id)  ;
 
       if (isNaN(id) || id === undefined) {
         res.status(404);
@@ -79,6 +79,25 @@ class UserController {
         "err": "Não foi possível encontrar o usuário",
         "message": `${e}`
       });
+    }
+  }
+
+  async edit (req, res, next) {
+    let { id, name, email, role } = req.body;
+
+    let result = await User.update(id, name, email, role);
+
+    if (result != undefined) {
+      if (result.status === true) {
+        res.status(200);
+        res.json({ "status": "Usuário atualizado"});
+      } else {
+        res.status(404);
+        res.json(result);
+      }
+    } else {
+      res.status(406);
+      res.json(result);
     }
   }
 }
