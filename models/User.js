@@ -31,7 +31,33 @@ class User {
       console.error(e);
       return false;
     }
+  }
 
+  async findUsers () {
+    try {
+      const result = await knex
+        .select(['id', 'name', 'email', 'role'])
+        .table('users');
+
+      return result;
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  }
+
+  async findById (id) {
+    try {
+      const result = await knex
+        .select(['id', 'name', 'email', 'role'])
+        .table('users')
+        .where({ id: id });
+
+      return result;
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
   }
 }
 
