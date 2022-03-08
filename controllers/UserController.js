@@ -100,6 +100,20 @@ class UserController {
       res.json(result);
     }
   }
+
+  async delete (req, res, next) {
+    let { id } = req.params;
+
+    let result = await User.delete(id);
+
+    if (result.status) {
+      res.status(200);
+      res.json({ "status": "Usuário deletado com sucesso" });
+    } else {
+      res.status(406);
+      res.json(result.err);
+    }
+  }
 }
 
 module.exports = new UserController();
